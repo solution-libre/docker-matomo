@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  matomo:
+    image: matomo:fpm-alpine
+    restart: always
+    # Traefik labels are suggested as an example for people using Traefik,
+    # remove them if you are using another reverse proxy.
+    labels:
+      traefik.enable: 'true'
+      traefik.frontend.rule: "Host:${HOSTNAME}"
+      traefik.port: '80'
+    # If you don't want to use a reverse proxy (not suitable for production!)
+    # ports:
+    #  - "80:80"
+    volumes:
+      - ./docker-volume/matomo/logs:/var/www/html/config
+      - ./docker-volume/matomo/config:/var/www/html/logs
+    environment:
+      - VIRTUAL_HOST: ${HOSTNAME}
+    env_file:
+      - db.env
+    depends_on:
+      - db
+
+  db:
+    image: mariadb
+    restart: always
+    volumes:
+      - ./docker-volume/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+    env_file:
+      - db.env

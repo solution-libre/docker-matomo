@@ -18,8 +18,6 @@ services:
       - ./docker-volume/matomo/config:/var/www/html/logs
     environment:
       - VIRTUAL_HOST: ${HOSTNAME}
-    env_file:
-      - db.env
     depends_on:
       - db
 
@@ -28,7 +26,5 @@ services:
     restart: always
     volumes:
       - ./docker-volume/db:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=
     env_file:
       - db.env

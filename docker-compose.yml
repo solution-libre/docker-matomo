@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  matomo:
-    image: matomo:fpm-alpine
+  app:
+    image: matomo:latest
     restart: always
     # Traefik labels are suggested as an example for people using Traefik,
     # remove them if you are using another reverse proxy.
@@ -14,10 +14,12 @@ services:
     # ports:
     #  - "80:80"
     volumes:
-      - ./docker-volume/matomo/logs:/var/www/html/config
-      - ./docker-volume/matomo/config:/var/www/html/logs
+      - ./docker-volume/app/config:/var/www/html/config
+      - ./docker-volume/app/logs:/var/www/html/logs
+      - ./docker-volume/app/misc/user:/var/www/html/misc/user
+      - ./docker-volume/app/plugins:/var/www/html/plugins
     environment:
-      - VIRTUAL_HOST: ${HOSTNAME}
+      VIRTUAL_HOST: ${HOSTNAME}
     depends_on:
       - db
 
@@ -26,5 +28,10 @@ services:
     restart: always
     volumes:
       - ./docker-volume/db:/var/lib/mysql
+    environment:
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
     env_file:
       - db.env
+    command: ['--max-allowed-packet=67108864']

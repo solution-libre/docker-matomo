@@ -3,7 +3,7 @@ version: '3'
 services:
   app:
     image: matomo:latest
-    restart: always
+    restart: unless-stopped
     # Traefik labels are suggested as an example for people using Traefik,
     # remove them if you are using another reverse proxy.
     labels:
@@ -25,7 +25,7 @@ services:
 
   db:
     image: mariadb
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./docker-volume/db:/var/lib/mysql
     environment:
